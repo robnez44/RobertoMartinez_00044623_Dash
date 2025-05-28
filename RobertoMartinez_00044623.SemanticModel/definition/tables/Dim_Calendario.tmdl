@@ -1,0 +1,78 @@
+table Dim_Calendario
+	lineageTag: ec756fba-da10-49e5-abb0-8628941803d9
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 47a157a3-8f3a-4998-8447-64f72bcf7882
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		variation Variation
+			isDefault
+			relationship: f3a4b991-f5e5-440f-a97c-290e85effb94
+			defaultHierarchy: LocalDateTable_2444e507-cce5-4340-b68f-4c4e0011ca85.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Año
+		dataType: int64
+		formatString: 0
+		lineageTag: 78792f09-9252-49a3-9b77-86082d27234d
+		summarizeBy: sum
+		sourceColumn: Año
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semana
+		dataType: int64
+		formatString: 0
+		lineageTag: 749eedec-7778-4319-b74b-01361400af6e
+		summarizeBy: sum
+		sourceColumn: Semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		dataType: string
+		lineageTag: 0f655c4f-5349-4c85-a63d-a1d24c7ab82f
+		summarizeBy: none
+		sourceColumn: Mes
+		sortByColumn: 'Numero Mes'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Numero Mes'
+		dataType: int64
+		formatString: 0
+		lineageTag: e022db31-9b10-4bfc-b70c-bb2ec8be3987
+		summarizeBy: sum
+		sourceColumn: Numero Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column datekey
+		dataType: int64
+		formatString: 0
+		lineageTag: b5cc77b7-ae45-4b9e-9b8a-cc1c0ebdfd9b
+		summarizeBy: none
+		sourceColumn: datekey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Calendario = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\elise\Desktop\VentasVehiculos.xlsx"), null, true),
+				    Dim_Calendario_Table = Source{[Item="Dim_Calendario",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(Dim_Calendario_Table,{{"Fecha", type date}, {"Año", Int64.Type}, {"Semana", Int64.Type}, {"Mes", type text}, {"Numero Mes", Int64.Type}, {"datekey", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
